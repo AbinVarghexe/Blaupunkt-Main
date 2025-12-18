@@ -8,7 +8,15 @@ export async function POST(request) {
 
         if (!process.env.RESEND_API_KEY) {
             console.error('❌ RESEND_API_KEY is missing');
-            return NextResponse.json({ success: false, error: 'Server configuration error: Missing API Key' }, { status: 500 });
+            const envStatus = {
+                NODE_ENV: process.env.NODE_ENV,
+                KEY_EXISTS: !!process.env.RESEND_API_KEY,
+                CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'missing'
+            };
+            return NextResponse.json({
+                success: false,
+                error: `Server configuration error: Missing API Key. Debug: ${JSON.stringify(envStatus)}`
+            }, { status: 500 });
         }
 
         const resend = new Resend(process.env.RESEND_API_KEY);
