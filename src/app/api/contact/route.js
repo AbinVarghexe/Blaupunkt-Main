@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderEmailHtml } from '@/lib/emailRenderer';
 import EnquireTemplate from '@/components/emails/EnquireTemplate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -10,7 +10,7 @@ export async function POST(request) {
         const body = await request.json();
         const { name, email, phone, message } = body;
 
-        const emailHtml = renderToStaticMarkup(
+        const emailHtml = renderEmailHtml(
             <EnquireTemplate
                 name={name}
                 email={email}
