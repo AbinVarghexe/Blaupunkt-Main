@@ -53,3 +53,27 @@ export async function POST(request) {
         return NextResponse.json({ success: false, error: 'Email failed: ' + error.message }, { status: 500 });
     }
 }
+
+// Test endpoint (GET) to verify Resend configuration without using the form
+export async function GET() {
+    try {
+        const key = 're_hHrtR3yG_F9gfjtuPWud64eCYSnKuni2k';
+        const recipient = 'blaupunktcontact@gmail.com';
+        const resend = new Resend(key);
+
+        const data = await resend.emails.send({
+            from: 'Blaupunkt Website <onboarding@resend.dev>',
+            to: [recipient],
+            subject: 'Test Email from Blaupunkt Backend',
+            html: '<p>If you see this, the Resend configuration works!</p>'
+        });
+
+        if (data.error) {
+            return NextResponse.json({ success: false, error: data.error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, message: 'Test email sent!', id: data.id });
+    } catch (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+}
