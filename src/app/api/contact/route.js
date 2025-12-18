@@ -2,25 +2,20 @@ import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { EnquireTemplate } from '../../../../src/Components/emails/EnquireTemplate';
 
-// 1. Force dynamic rendering to prevent static caching issues on Hostinger
+// 1. Force dynamic rendering
 export const dynamic = 'force-dynamic';
-
-// 2. Enforce Node.js runtime (Resend doesn't support Edge on some platforms)
+// 2. Enforce Node.js runtime
 export const runtime = 'nodejs';
 
 export async function POST(request) {
     try {
-        // 3. Log key visibility for debugging (masked)
-        const key = process.env.RESEND_API_KEY;
-        console.log('📝 Contact API called');
-        console.log('🔑 RESEND KEY:', key ? `Starts with ${key.substring(0, 3)}...` : 'UNDEFINED');
+        // Hardcoded credentials as requested by user
+        const key = 're_hHrtR3yG_F9gfjtuPWud64eCYSnKuni2k';
+        const recipient = 'blaupunktcontact@gmail.com';
 
-        if (!key) {
-            return NextResponse.json({
-                success: false,
-                error: 'Server configuration error: Missing RESEND_API_KEY'
-            }, { status: 500 });
-        }
+        console.log('📝 Contact API called (Hardcoded Config)');
+        // Log first 3 chars to verify keys are loaded in memory
+        console.log('🔑 RESEND KEY:', key ? `Starts with ${key.substring(0, 3)}...` : 'UNDEFINED');
 
         const resend = new Resend(key);
 
@@ -36,10 +31,9 @@ export async function POST(request) {
             message
         });
 
-        const recipient = process.env.CONTACT_EMAIL || 'info@blaupunkt-ev.com';
-
+        // Send email
         const data = await resend.emails.send({
-            from: 'Blaupunkt Website <onboarding@resend.dev>', // Update to specific domain if/when verified
+            from: 'Blaupunkt Website <onboarding@resend.dev>',
             to: [recipient],
             subject: `New Contact Form Submission from ${name}`,
             html: emailHtml
@@ -47,6 +41,7 @@ export async function POST(request) {
 
         if (data.error) {
             console.error('❌ Resend API Error:', data.error);
+            // Return specific error from Resend
             return NextResponse.json({ success: false, error: data.error.message }, { status: 500 });
         }
 
