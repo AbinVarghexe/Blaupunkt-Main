@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "start": "next start",
+    "lint": "eslint",
+    "build:hostinger": "node prepare-hostinger.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4",
